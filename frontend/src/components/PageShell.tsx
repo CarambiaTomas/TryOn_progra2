@@ -1,9 +1,10 @@
 import type { ReactNode, ComponentType } from "react";
+import type { IconWeight } from "@phosphor-icons/react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 
 interface PageShellProps {
-  icon: ComponentType<{ className?: string; weight?: any }>;
+  icon: ComponentType<{ className?: string; weight?: IconWeight }>;
   title: string;
   subtitle: string;
   /** Tailwind max-width class for the content column. */
