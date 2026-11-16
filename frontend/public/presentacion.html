@@ -1970,6 +1970,9 @@
     function goToSlide(n) {
       if (n < 1 || n > totalSlides) return;
       currentSlide = n;
+      try {
+        history.replaceState(null, '', '#' + n);
+      } catch (_) {}
 
       slides.forEach((slide) => {
         const slideIndex = parseInt(slide.dataset.slide, 10);
@@ -2123,7 +2126,9 @@
     });
 
     // Initialize state
-    goToSlide(1);
+    const urlParamSlide = parseInt(new URLSearchParams(window.location.search).get('slide') || window.location.hash.replace('#', ''), 10);
+    const startSlide = (!isNaN(urlParamSlide) && urlParamSlide >= 1 && urlParamSlide <= totalSlides) ? urlParamSlide : 1;
+    goToSlide(startSlide);
     updateTimerDisplay();
   </script>
 </body>
