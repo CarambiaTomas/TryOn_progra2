@@ -202,22 +202,47 @@
       max-width: 1580px;
       height: calc(100% - 76px);
       max-height: 960px;
-      min-height: 640px;
+      min-height: 540px;
       background: var(--card-bg);
       backdrop-filter: blur(28px) saturate(180%);
       -webkit-backdrop-filter: blur(28px) saturate(180%);
       border: 1px solid var(--card-border);
-      border-radius: 28px;
+      border-radius: 24px;
       box-shadow: var(--card-shadow);
-      padding: 30px 42px;
+      padding: clamp(16px, 2.5vh, 28px) clamp(20px, 2.8vw, 38px);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       opacity: 0;
       visibility: hidden;
       transform: scale(0.97) translateY(14px);
-      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.28s;
       overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(148, 163, 184, 0.4) transparent;
+      pointer-events: none;
+    }
+
+    .slide::-webkit-scrollbar {
+      width: 6px;
+    }
+    .slide::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .slide::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.35);
+      border-radius: 9999px;
+    }
+    .slide::-webkit-scrollbar-thumb:hover {
+      background: rgba(148, 163, 184, 0.6);
+    }
+
+    .slide:not(.active) {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      z-index: 1;
     }
 
     .slide.active {
@@ -225,6 +250,7 @@
       visibility: visible;
       transform: scale(1) translateY(0);
       z-index: 10;
+      pointer-events: auto;
     }
 
     /* Slide Header */
@@ -232,7 +258,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       flex-shrink: 0;
     }
     .badge-tag {
@@ -240,7 +266,7 @@
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      padding: 5px 14px;
+      padding: 4px 12px;
       border-radius: 9999px;
       background: var(--primary-light);
       color: var(--primary);
@@ -251,79 +277,86 @@
     }
     .slide-num-indicator {
       font-family: var(--font-mono);
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 700;
       color: var(--text-soft);
       background: rgba(241, 245, 249, 0.8);
       border: 1px solid rgba(226, 232, 240, 0.8);
-      padding: 4px 12px;
+      padding: 3px 10px;
       border-radius: 9999px;
     }
 
     h1.slide-title {
-      font-size: 2.25rem;
+      font-size: clamp(1.65rem, 2.2vw, 2.25rem);
       font-weight: 800;
       line-height: 1.15;
       letter-spacing: -0.03em;
       color: var(--text-main);
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
     h1.slide-title span.hl { color: var(--primary); }
     p.slide-sub {
-      font-size: 1.02rem;
+      font-size: clamp(0.85rem, 1vw, 1.02rem);
       color: var(--text-muted);
-      line-height: 1.4;
-      margin-bottom: 14px;
+      line-height: 1.35;
+      margin-bottom: 10px;
       flex-shrink: 0;
     }
 
     /* Content Layouts: Occupy all space */
     .slide-body {
-      flex: 1;
+      flex: 1 1 auto;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: flex-start;
       min-height: 0;
-      gap: 14px;
+      gap: clamp(8px, 1.3vh, 14px);
     }
 
     .grid-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 22px;
+      gap: clamp(12px, 1.6vw, 22px);
       align-items: stretch;
-      flex: 1;
-      min-height: 0;
+      flex: 1 1 auto;
+      min-height: min-content;
     }
 
     .grid-3 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
+      gap: clamp(10px, 1.4vw, 18px);
       align-items: stretch;
-      flex: 1;
-      min-height: 0;
+      flex: 1 1 auto;
+      min-height: min-content;
     }
 
     .grid-4 {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
+      gap: clamp(8px, 1vw, 16px);
       align-items: stretch;
-      flex: 1;
-      min-height: 0;
+      flex: 1 1 auto;
+      min-height: min-content;
     }
 
     .glass-card {
       background: var(--subcard-bg);
       border: 1px solid var(--subcard-border);
-      border-radius: 20px;
-      padding: 22px 24px;
+      border-radius: 18px;
+      padding: clamp(12px, 1.8vh, 20px) clamp(14px, 1.8vw, 22px);
       box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
       transition: all 0.25s ease;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      min-height: 0;
+      height: auto;
+      box-sizing: border-box;
+    }
+    .grid-2 > .glass-card,
+    .grid-3 > .glass-card,
+    .grid-4 > .glass-card {
       height: 100%;
     }
     .glass-card:hover {
@@ -334,6 +367,12 @@
     .glass-card.highlight {
       background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(56, 189, 248, 0.08) 100%);
       border: 1.5px solid rgba(37, 99, 235, 0.35);
+      height: auto !important;
+      flex-shrink: 0;
+    }
+    .slide-body > .glass-card {
+      height: auto !important;
+      flex-shrink: 0;
     }
 
     .card-header-icon {
@@ -673,20 +712,6 @@
       flex-shrink: 0;
     }
 
-    /* Laptop & Standard Screens (1366x768 / height <= 800px) */
-    @media (max-height: 800px), (max-width: 1366px) {
-      #deck { padding: 56px 18px 12px 18px; }
-      .slide { padding: 22px 32px; min-height: 560px; max-height: calc(100vh - 72px); border-radius: 22px; }
-      h1.slide-title { font-size: 2.05rem; margin-bottom: 2px; }
-      p.slide-sub { font-size: 0.95rem; margin-bottom: 10px; }
-      .glass-card { padding: 16px 20px; border-radius: 16px; }
-      .card-title { font-size: 1.12rem; }
-      .slide-body { gap: 12px; }
-      .metric-badge { padding: 10px 14px; border-radius: 14px; }
-      .metric-val { font-size: 1.7rem; }
-      .code-box { padding: 16px 20px; font-size: 0.82rem; line-height: 1.45; }
-    }
-  
     /* Capturas reales: el placeholder SVG puede sustituirse por IMG sin alterar el layout */
     .screenshot-slot {
       width: 100%; max-height: 260px; overflow: hidden; display: flex;
@@ -706,18 +731,45 @@
       padding: 8px 12px; overflow: hidden;
     }
     .diagram-panel svg { display: block; max-width: 100%; }
-    @media (max-height: 800px), (max-width: 1366px) {
-      .slide { min-height: 0; height: calc(100% - 76px); max-height: calc(100vh - 72px); padding: 16px 26px; overflow: hidden; }
+
+    /* Responsive Adaptations for Laptop & Scaled Displays (1366x768, 1440x900, 1080p @ 125%) */
+    @media (max-height: 860px), (max-width: 1400px) {
+      #deck { padding: 54px 16px 10px 16px; }
+      .slide {
+        padding: 16px 24px;
+        min-height: 0;
+        max-height: calc(100vh - 68px);
+        border-radius: 20px;
+      }
+      h1.slide-title { font-size: 1.85rem; margin-bottom: 2px; line-height: 1.15; }
+      p.slide-sub { font-size: 0.88rem; margin-bottom: 8px; line-height: 1.35; }
+      .glass-card { padding: 12px 16px; border-radius: 14px; }
+      .card-title { font-size: 1.05rem; }
+      .card-desc, .feature-item { font-size: 0.82rem; line-height: 1.32; }
       .slide-body { gap: 8px; }
-      h1.slide-title { font-size: 1.78rem; line-height: 1.1; }
-      p.slide-sub { font-size: .84rem; line-height: 1.25; margin-bottom: 6px; }
-      .glass-card { padding: 12px 14px; }
-      .card-title { font-size: 1rem; }
-      .card-desc, .feature-item { font-size: .79rem; line-height: 1.28; }
-      .feature-list { gap: 6px; margin-top: 7px; }
-      .slide-footer { margin-top: 6px; padding-top: 6px; }
+      .metric-badge { padding: 8px 12px; border-radius: 12px; }
+      .metric-val { font-size: 1.55rem; }
+      .code-box { padding: 12px 16px; font-size: 0.78rem; line-height: 1.4; }
+      .screenshot-slot, .screenshot-slot img, .screenshot-slot > svg { max-height: 200px; }
       .diagram-panel { padding: 5px 8px; }
-      .screenshot-slot, .screenshot-slot img, .screenshot-slot > svg { max-height: 230px; }
+      .slide-footer { margin-top: 6px; padding-top: 6px; }
+    }
+
+    /* Compact Displays & Netbooks (height <= 720px) */
+    @media (max-height: 720px) {
+      #deck { padding: 48px 12px 6px 12px; }
+      .slide { padding: 12px 18px; border-radius: 16px; }
+      h1.slide-title { font-size: 1.55rem; margin-bottom: 2px; }
+      p.slide-sub { font-size: 0.8rem; margin-bottom: 5px; }
+      .glass-card { padding: 9px 12px; border-radius: 12px; }
+      .card-title { font-size: 0.95rem; }
+      .card-desc, .feature-item { font-size: 0.76rem; line-height: 1.25; }
+      .feature-list { gap: 4px; margin-top: 5px; }
+      .slide-body { gap: 6px; }
+      .metric-badge { padding: 6px 10px; border-radius: 10px; }
+      .metric-val { font-size: 1.35rem; }
+      .screenshot-slot, .screenshot-slot img, .screenshot-slot > svg { max-height: 160px; }
+      .slide-footer { margin-top: 4px; padding-top: 4px; }
     }
 </style>
 </head>
@@ -779,7 +831,7 @@
 <span class="slide-num-indicator">01 / 13</span>
 </div>
 <div class="slide-body">
-<div class="grid-2" style="align-items: center;">
+<div class="grid-2" style="align-items: center">
 <div>
 <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(37,99,235,0.08); border: 1px solid rgba(37,99,235,0.2); padding: 6px 14px; border-radius: 9999px; margin-bottom: 14px;">
 <svg class="icon" fill="currentColor" style="width: 16px; height: 16px; color: var(--primary);" viewbox="0 0 256 256"><polygon opacity="0.25" points="128,32 216,80 216,176 128,224 40,176 40,80"></polygon><path d="M220.16,73.61l-88-48a8,8,0,0,0-8.32,0l-88,48A8,8,0,0,0,32,80.59v94.82a8,8,0,0,0,3.84,7l88,48a8,8,0,0,0,8.32,0l88-48a8,8,0,0,0,3.84-7V80.59A8,8,0,0,0,220.16,73.61ZM128,41.22,201.25,81.16,128,121.1,54.75,81.16ZM48,95.12,120,134.4v76.84L48,171.88Zm160,76.76-72,39.36V134.4l72-39.28Z"></path></svg>
@@ -865,7 +917,7 @@
 <p class="slide-sub">El 70% de las devoluciones en e-commerce de moda responden a discrepancias de talle y moldería.</p>
 </div>
 <div class="slide-body">
-<div class="grid-3" style="margin-bottom: 10px;">
+<div class="grid-3">
 <div class="glass-card" style="padding: 16px 20px;">
 <div>
 <div class="card-header-icon" style="margin-bottom: 8px;">
@@ -962,7 +1014,7 @@
 <p class="slide-sub">La plataforma vincula marcas y consumidores mediante simulación paramétrica de calce 3D.</p>
 </div>
 <div class="slide-body">
-<div class="grid-2" style="margin-bottom: 12px;">
+<div class="grid-2">
 <div class="glass-card highlight">
 <div>
 <div class="card-header-icon">
@@ -1004,7 +1056,7 @@
 </div>
 </div>
 </div>
-<div class="grid-4" style="flex: 0 0 auto;">
+<div class="grid-4" style="flex: 0 0 auto">
 <div class="metric-badge" style="padding: 10px 14px;">
 <span class="metric-val" style="font-size: 1.7rem;">-65%</span>
 <span class="metric-lbl">Devoluciones por Talle</span>
@@ -1189,7 +1241,7 @@
 <p class="slide-sub">Integridad de órdenes mediante Checkout Atómico, Snapshot de Precios y Rollbacks automáticos.</p>
 </div>
 <div class="slide-body">
-<div class="grid-2" style="align-items: stretch; margin-bottom: 12px;">
+<div class="grid-2" style="align-items: stretch">
 <div class="glass-card">
 <div>
 <div class="card-header-icon">
@@ -1230,7 +1282,7 @@
 <text fill="#475569" font-size="15" text-anchor="middle" x="450" y="153">Eliminar ítems del carrito → COMMIT; ante excepción → ROLLBACK</text>
 </svg></div>
 </div>
-<div class="grid-4" style="flex: 0 0 auto;">
+<div class="grid-4" style="flex: 0 0 auto">
 <div class="glass-card" style="padding: 12px 16px;">
 <strong style="color: var(--primary); font-size: 0.92rem;">Atomicidad (A)</strong>
 <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Todo el checkout o nada; ante fallos de persistencia o IA, rollback automático.</p>
@@ -1268,7 +1320,7 @@
 <p class="slide-sub">Generación procedural de mallas en Three.js mediante interpolación Catmull-Rom de anillos anatómicos.</p>
 </div>
 <div class="slide-body">
-<div class="grid-2" style="align-items: stretch; margin-bottom: 12px;">
+<div class="grid-2" style="align-items: stretch">
 <div class="glass-card">
 <div>
 <h3 class="card-title" style="margin-bottom: 10px;">Generación Procedural en Tiempo de Ejecución</h3>
@@ -1352,7 +1404,7 @@
             </p>
 </div>
 </div>
-<div class="grid-4" style="flex: 0 0 auto;">
+<div class="grid-4" style="flex: 0 0 auto">
 <div class="metric-badge" style="padding: 10px 14px;">
 <span class="metric-val" style="font-size: 1.7rem;">60 FPS</span>
 <span class="metric-lbl">Tasa de Refresco Fluida</span>
@@ -1390,7 +1442,7 @@
 <p class="slide-sub">Edición de moldería en centímetros y visualización inmediata del modelo 3D.</p>
 </div>
 <div class="slide-body">
-<div class="grid-2" style="align-items: stretch; margin-bottom: 12px;">
+<div class="grid-2" style="align-items: stretch">
 <!-- Clean Technical Blueprint SVG: B2B Studio Viewport -->
 <div class="glass-card" style="padding: 16px; text-align: center; justify-content: center; align-items: center;">
 <!-- SLOT CAPTURA REAL: Estudio B2B: viewport 3D de moldería. Reemplazar el SVG temporal por un IMG. --><div class="screenshot-slot"><svg class="blueprint-svg" style="width: 100%; height: auto; max-height: 280px; border-radius: 14px; background: #081226; border: 1px solid rgba(56, 189, 248, 0.25); box-shadow: inset 0 0 40px rgba(15, 23, 42, 0.8), 0 8px 24px rgba(0, 0, 0, 0.08);" viewbox="0 0 520 300" xmlns="http://www.w3.org/2000/svg">
@@ -1486,7 +1538,7 @@
 </div>
 </div>
 </div>
-<div class="grid-3" style="flex: 0 0 auto;">
+<div class="grid-3" style="flex: 0 0 auto">
 <div class="glass-card" style="padding: 12px 16px;">
 <strong style="color: var(--primary); font-size: 0.9rem;">Ficha Técnica Talle M</strong>
 <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Cintura: 82cm · Cadera: 100cm · Muslo: 58cm · Botamanga: 20cm</p>
@@ -1520,7 +1572,7 @@
 <p class="slide-sub">Procesamiento por lotes con validación de esquemas y notificación desacoplada de eventos.</p>
 </div>
 <div class="slide-body">
-<div class="grid-2" style="margin-bottom: 12px;">
+<div class="grid-2">
 <div class="glass-card">
 <div>
 <h3 class="card-title" style="margin-bottom: 10px;">Flujo de Ingesta Masiva</h3>
@@ -1550,7 +1602,7 @@
 <text fill="#475569" font-size="15" x="740" y="95">update(job_id, status, context)</text>
 </svg></div>
 </div>
-<div class="grid-3" style="flex: 0 0 auto;">
+<div class="grid-3" style="flex: 0 0 auto">
 <div class="glass-card" style="padding: 12px 16px;">
 <strong style="color: var(--primary); font-size: 0.9rem;">100% Desacoplado</strong>
 <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Observer Push seguro para hilos asíncronos en background.</p>
@@ -1648,7 +1700,7 @@
 <p class="slide-sub">Verificación continua de arquitectura limpia, patrones GoF, autenticación y transacciones.</p>
 </div>
 <div class="slide-body">
-<div class="grid-2" style="align-items: stretch; margin-bottom: 12px;">
+<div class="grid-2" style="align-items: stretch">
 <div class="glass-card highlight">
 <div>
 <div style="display: flex; align-items: baseline; gap: 14px; margin-bottom: 6px;">
@@ -1718,7 +1770,7 @@
 <text fill="#2563eb" font-size="17" font-weight="700" text-anchor="middle" x="450" y="190">122 / 122 PASSED · 14.82 s</text>
 </svg></div>
 </div>
-<div class="grid-3" style="flex: 0 0 auto;">
+<div class="grid-3" style="flex: 0 0 auto">
 <div class="glass-card" style="padding: 12px 16px;">
 <strong style="color: var(--primary); font-size: 0.9rem;">CI/CD en GitHub Actions</strong>
 <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Pipeline en Ubuntu con Python 3.11 (Pytest) y Node 20 (TypeScript check).</p>
@@ -1821,7 +1873,7 @@
 <p class="slide-sub">Resumen de las decisiones técnicas y acceso a la demostración.</p>
 </div>
 <div class="slide-body">
-<div class="grid-2" style="align-items: stretch; margin-bottom: 12px;">
+<div class="grid-2" style="align-items: stretch">
 <div class="glass-card">
 <div>
 <h3 class="card-title" style="margin-bottom: 10px;">Matriz de Cumplimiento de Consignas</h3>
@@ -1865,7 +1917,7 @@
 </a>
 </div>
 </div>
-<div class="grid-3" style="flex: 0 0 auto;">
+<div class="grid-3" style="flex: 0 0 auto">
 <div class="glass-card" style="padding: 12px 16px;">
 <strong style="color: var(--primary); font-size: 0.88rem;">Documentación OpenAPI</strong>
 <p style="font-size: 0.8rem; color: var(--text-muted);">http://localhost:8000/docs (Swagger UI completo)</p>
@@ -1918,6 +1970,9 @@
     function goToSlide(n) {
       if (n < 1 || n > totalSlides) return;
       currentSlide = n;
+      try {
+        history.replaceState(null, '', '#' + n);
+      } catch (_) {}
 
       slides.forEach((slide) => {
         const slideIndex = parseInt(slide.dataset.slide, 10);
@@ -2071,7 +2126,9 @@
     });
 
     // Initialize state
-    goToSlide(1);
+    const urlParamSlide = parseInt(new URLSearchParams(window.location.search).get('slide') || window.location.hash.replace('#', ''), 10);
+    const startSlide = (!isNaN(urlParamSlide) && urlParamSlide >= 1 && urlParamSlide <= totalSlides) ? urlParamSlide : 1;
+    goToSlide(startSlide);
     updateTimerDisplay();
   </script>
 </body>
