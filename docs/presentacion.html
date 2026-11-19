@@ -816,7 +816,7 @@
     .thumb-dot:hover { color: var(--primary); border-color: var(--primary-border); background: var(--primary-light); }
     .thumb-dot.active { background: var(--primary); color: #ffffff; border-color: var(--primary); }
 
-    /* Lightbox Modal */
+    /* Lightbox Modal (soporta Imágenes + Diagramas SVG Vectoriales) */
     #lightbox {
       position: fixed; inset: 0;
       background: rgba(15, 23, 42, 0.74);
@@ -830,13 +830,56 @@
     #lightbox-card {
       background: rgba(255, 255, 255, 0.96);
       border-radius: 20px;
-      padding: 12px;
+      padding: 14px;
       max-width: 92vw; max-height: 90vh;
       display: flex; flex-direction: column; gap: 10px;
       box-shadow: 0 30px 70px rgba(0, 0, 0, 0.35);
     }
     #lightbox-card img { max-width: 88vw; max-height: 78vh; object-fit: contain; border-radius: 12px; display: block; }
-    #lightbox-caption { display: flex; align-items: center; justify-content: space-between; padding: 2px 8px; font-size: 0.92rem; font-weight: 700; color: var(--text-main); }
+    #lightbox-svg-stage { width: 84vw; height: 74vh; display: none; align-items: center; justify-content: center; background: #ffffff; border-radius: 14px; padding: 16px; border: 1px solid rgba(148, 163, 184, 0.25); }
+    #lightbox-svg-stage svg { width: 100%; height: 100%; max-height: 70vh; display: block; }
+    #lightbox-caption { display: flex; align-items: center; justify-content: space-between; padding: 2px 8px; font-size: 0.92rem; font-weight: 700; color: var(--text-main); gap: 16px; }
+
+    /* Zoom interactivo en Diagramas UML */
+    .diagram-panel { cursor: zoom-in; position: relative; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+    .diagram-panel:hover { border-color: rgba(37, 99, 235, 0.48); box-shadow: inset 0 1px 0 var(--glass-specular-top), 0 12px 28px -10px rgba(37, 99, 235, 0.18); }
+    .diagram-panel::after {
+      content: "Clic para ampliar";
+      position: absolute; bottom: 10px; right: 12px;
+      background: rgba(15, 23, 42, 0.72); color: #ffffff;
+      font-size: 0.72rem; font-weight: 600; padding: 4px 10px; border-radius: 9999px;
+      opacity: 0; transition: opacity 0.2s ease; pointer-events: none;
+    }
+    .diagram-panel:hover::after { opacity: 1; }
+
+    /* Comparativa Calce Lado a Lado (Slide 6) */
+    .split-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex: 1 1 0; min-height: 0; }
+    .compare-tile { display: flex; flex-direction: column; min-height: 0; border-radius: 14px; border: 1px solid var(--glass-border-outer); overflow: hidden; background: #ffffff; }
+    .compare-head { padding: 6px 10px; font-size: 0.76rem; font-weight: 800; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(148,163,184,0.22); flex-shrink: 0; }
+    .compare-head.tight { background: rgba(244, 63, 94, 0.08); color: #be123c; }
+    .compare-head.ideal { background: rgba(16, 185, 129, 0.10); color: #047857; }
+
+    /* Notas del Orador (Modo Presentador - Tecla N) */
+    #speaker-notes {
+      position: fixed;
+      bottom: 18px; left: 24px;
+      width: min(560px, calc(100vw - 48px));
+      background: rgba(15, 23, 42, 0.92);
+      color: #f8fafc;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      border-radius: 18px;
+      padding: 14px 18px;
+      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.35);
+      z-index: 70;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+    }
+    #speaker-notes.open { display: flex; }
+    .notes-header { display: flex; align-items: center; justify-content: space-between; font-size: 0.76rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: #93c5fd; }
+    #speaker-notes-text { font-size: 0.9rem; line-height: 1.48; color: #e2e8f0; }
 
     svg.icon { display: inline-block; vertical-align: middle; flex-shrink: 0; }
 
@@ -866,6 +909,10 @@
     </nav>
 
     <div class="top-actions">
+      <button type="button" class="btn-glass" id="btn-notes-toggle" title="Notas del orador (Tecla N)">
+        <svg class="icon" viewBox="0 0 256 256" fill="currentColor" style="width:16px;height:16px;" aria-hidden="true"><path d="M216,64V192H88V64Z" opacity="0.2"/><path d="M80,64a8,8,0,0,1,8-8H216a8,8,0,0,1,0,16H88A8,8,0,0,1,80,64Zm136,56H88a8,8,0,1,0,0,16H216a8,8,0,0,0,0-16Zm0,64H88a8,8,0,1,0,0,16H216a8,8,0,0,0,0-16ZM44,52A12,12,0,1,0,56,64,12,12,0,0,0,44,52Zm0,64a12,12,0,1,0,12,12A12,12,0,0,0,44,116Zm0,64a12,12,0,1,0,12,12A12,12,0,0,0,44,180Z"/></svg>
+        <span>Notas (N)</span>
+      </button>
       <button type="button" class="btn-glass" id="btn-drawer-toggle" title="Índice de diapositivas">
         <svg class="icon" viewBox="0 0 256 256" fill="currentColor" style="width:16px;height:16px;" aria-hidden="true"><path d="M112,56v48a8,8,0,0,1-8,8H56a8,8,0,0,1-8-8V56a8,8,0,0,1,8-8h48A8,8,0,0,1,112,56Zm88-8H152a8,8,0,0,0-8,8v48a8,8,0,0,0,8,8h48a8,8,0,0,0,8-8V56A8,8,0,0,0,200,48Zm-96,96H56a8,8,0,0,0-8,8v48a8,8,0,0,0,8,8h48a8,8,0,0,0,8-8V152A8,8,0,0,0,104,144Zm96,0H152a8,8,0,0,0-8,8v48a8,8,0,0,0,8,8h48a8,8,0,0,0,8-8V152A8,8,0,0,0,200,144Z" opacity="0.2"/><path d="M200,136H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,200,136Zm0,64H152V152h48v48ZM104,40H56A16,16,0,0,0,40,56v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,104,40Zm0,64H56V56h48v48Zm96-64H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,200,40Zm0,64H152V56h48v48Zm-96,32H56a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,104,136Zm0,64H56V152h48v48Z"/></svg>
         <span>Índice (17)</span>
@@ -1226,8 +1273,9 @@
 
           <div class="glass-card screenshot-card highlight">
             <div class="view-tabs">
-              <button type="button" class="view-tab active" onclick="switchTab(5, 'market', this)"><svg class="icon" viewBox="0 0 256 256" fill="currentColor" style="width:14px;height:14px;" aria-hidden="true"><path d="M224,64l-12.16,66.86A16,16,0,0,1,196.1,144H70.55L56,64Z" opacity="0.2"/><path d="M230.14,58.87A8,8,0,0,0,224,56H62.68L56.6,22.57A8,8,0,0,0,48.73,16H24a8,8,0,0,0,0,16h18L67.56,172.29a24,24,0,0,0,5.33,11.27,28,28,0,1,0,44.4,8.44h45.42A27.75,27.75,0,0,0,160,204a28,28,0,1,0,28-28H91.17a8,8,0,0,1-7.87-6.57L80.13,152h116a24,24,0,0,0,23.61-19.71l12.16-66.86A8,8,0,0,0,230.14,58.87ZM104,204a12,12,0,1,1-12-12A12,12,0,0,1,104,204Zm96,0a12,12,0,1,1-12-12A12,12,0,0,1,200,204Zm4-74.57A8,8,0,0,1,196.1,136H77.22L65.59,72H214.41Z"/></svg> Paso 1: Marketplace</button>
-              <button type="button" class="view-tab" onclick="switchTab(5, 'avatar', this)"><svg class="icon" viewBox="0 0 256 256" fill="currentColor" style="width:14px;height:14px;" aria-hidden="true"><path d="M192,96a64,64,0,1,1-64-64A64,64,0,0,1,192,96Z" opacity="0.2"/><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg> Paso 2: Editor de Avatar (/avatar)</button>
+              <button type="button" class="view-tab active" onclick="switchTab(5, 'market', this)"><svg class="icon" viewBox="0 0 256 256" fill="currentColor" style="width:14px;height:14px;" aria-hidden="true"><path d="M224,64l-12.16,66.86A16,16,0,0,1,196.1,144H70.55L56,64Z" opacity="0.2"/><path d="M230.14,58.87A8,8,0,0,0,224,56H62.68L56.6,22.57A8,8,0,0,0,48.73,16H24a8,8,0,0,0,0,16h18L67.56,172.29a24,24,0,0,0,5.33,11.27,28,28,0,1,0,44.4,8.44h45.42A27.75,27.75,0,0,0,160,204a28,28,0,1,0,28-28H91.17a8,8,0,0,1-7.87-6.57L80.13,152h116a24,24,0,0,0,23.61-19.71l12.16-66.86A8,8,0,0,0,230.14,58.87ZM104,204a12,12,0,1,1-12-12A12,12,0,0,1,104,204Zm96,0a12,12,0,1,1-12-12A12,12,0,0,1,200,204Zm4-74.57A8,8,0,0,1,196.1,136H77.22L65.59,72H214.41Z"/></svg> Paso 1: Tienda</button>
+              <button type="button" class="view-tab" onclick="switchTab(5, 'avatar', this)"><svg class="icon" viewBox="0 0 256 256" fill="currentColor" style="width:14px;height:14px;" aria-hidden="true"><path d="M192,96a64,64,0,1,1-64-64A64,64,0,0,1,192,96Z" opacity="0.2"/><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg> Paso 2: Avatar (/avatar)</button>
+              <button type="button" class="view-tab" onclick="switchTab(5, 'video', this)"><svg class="icon" viewBox="0 0 256 256" fill="currentColor" style="width:14px;height:14px;" aria-hidden="true"><path d="M184,120v61.65a8,8,0,0,1-2.34,5.65l-34.35,34.35a8,8,0,0,1-13.57-4.53L128,176ZM136,72H74.35a8,8,0,0,0-5.65,2.34L34.35,108.69a8,8,0,0,0,4.53,13.57L80,128ZM40,216c37.65,0,50.69-19.69,54.56-28.18L68.18,161.44C59.69,165.31,40,178.35,40,216Z" opacity="0.2"/><path d="M223.85,47.12a16,16,0,0,0-15-15c-12.58-.75-44.73.4-71.41,27.07L132.69,64H74.36A15.91,15.91,0,0,0,63,68.68L28.7,103a16,16,0,0,0,9.07,27.16l38.47,5.37,44.21,44.21,5.37,38.49a15.94,15.94,0,0,0,10.78,12.92,16.11,16.11,0,0,0,5.1.83A15.91,15.91,0,0,0,153,227.3L187.32,193A15.91,15.91,0,0,0,192,181.64V123.31l4.77-4.77C223.45,91.86,224.6,59.71,223.85,47.12ZM74.36,80h42.33L77.16,119.52,40,114.34Zm74.41-9.45a76.65,76.65,0,0,1,59.11-22.47,76.46,76.46,0,0,1-22.42,59.16L128,164.68,91.32,128ZM176,181.64,141.67,216l-5.19-37.17L176,139.31Zm-74.16,9.5C97.34,201,82.29,224,40,224a8,8,0,0,1-8-8c0-42.29,23-57.34,32.86-61.85a8,8,0,0,1,6.64,14.56c-6.43,2.93-20.62,12.36-23.12,38.91,26.55-2.5,36-16.69,38.91-23.12a8,8,0,1,1,14.56,6.64Z"/></svg> Video Flujo B2C</button>
             </div>
 
             <div id="slide5-market" class="tab-pane active">
@@ -1255,6 +1303,17 @@
                   <img src="/images/slides/real_avatar_editor.png" alt="Captura real del Editor de Avatar 3D en /avatar"/>
                   <span class="zoom-hint"><svg class="icon" viewBox="0 0 256 256" fill="currentColor" style="width:13px;height:13px;" aria-hidden="true"><path d="M208,48V208H48V48Z" opacity="0.2"/><path d="M216,48V96a8,8,0,0,1-16,0V67.31l-42.34,42.35a8,8,0,0,1-11.32-11.32L188.69,56H160a8,8,0,0,1,0-16h48A8,8,0,0,1,216,48ZM98.34,146.34,56,188.69V160a8,8,0,0,0-16,0v48a8,8,0,0,0,8,8H96a8,8,0,0,0,0-16H67.31l42.35-42.34a8,8,0,0,0-11.32-11.32ZM208,152a8,8,0,0,0-8,8v28.69l-42.34-42.35a8,8,0,0,0-11.32,11.32L188.69,200H160a8,8,0,0,0,0,16h48a8,8,0,0,0,8-8V160A8,8,0,0,0,208,152ZM67.31,56H96a8,8,0,0,0,0-16H48a8,8,0,0,0-8,8V96a8,8,0,0,0,16,0V67.31l42.34,42.35a8,8,0,0,0,11.32-11.32Z"/></svg> Ampliar captura</span>
                 </button>
+              </div>
+            </div>
+
+            <div id="slide5-video" class="tab-pane">
+              <div class="app-frame">
+                <div class="app-frame-bar">
+                  <div class="traffic-dots"><span style="background:#ef4444;"></span><span style="background:#f59e0b;"></span><span style="background:#22c55e;"></span></div>
+                  <span>Recorrido Animado B2C (Tienda → Avatar → Calce → Compra)</span>
+                  <span>Clip MP4</span>
+                </div>
+                <video src="/videos/slides/demo_b2c.mp4" autoplay loop muted playsinline controls style="width:100%; height:100%; flex:1 1 0; min-height:0; object-fit:cover; background:#eef3f9; display:block;"></video>
               </div>
             </div>
           </div>
@@ -1285,11 +1344,31 @@
         <div class="grid-2" style="grid-template-columns: 1.12fr 0.88fr;">
           <div class="glass-card screenshot-card highlight">
             <div class="view-tabs">
-              <button type="button" class="view-tab active" onclick="switchTab(6, 'tryon', this)"><svg class="icon" viewBox="0 0 256 256" fill="currentColor" style="width:14px;height:14px;" aria-hidden="true"><path d="M128,129.09V232a8,8,0,0,1-3.84-1l-88-48.16a8,8,0,0,1-4.16-7V80.2a8,8,0,0,1,.7-3.27Z" opacity="0.2"/><path d="M223.68,66.15,135.68,18h0a15.88,15.88,0,0,0-15.36,0l-88,48.17a16,16,0,0,0-8.32,14v95.64a16,16,0,0,0,8.32,14l88,48.17a15.88,15.88,0,0,0,15.36,0l88-48.17a16,16,0,0,0,8.32-14V80.18A16,16,0,0,0,223.68,66.15ZM128,32h0l80.34,44L128,120,47.66,76ZM40,90l80,43.78v85.79L40,175.82Zm96,129.57V133.82L216,90v85.78Z"/></svg> Paso 3: Probador 3D (/product/1)</button>
-              <button type="button" class="view-tab" onclick="switchTab(6, 'cart', this)"><svg class="icon" viewBox="0 0 256 256" fill="currentColor" style="width:14px;height:14px;" aria-hidden="true"><path d="M224,64l-12.16,66.86A16,16,0,0,1,196.1,144H70.55L56,64Z" opacity="0.2"/><path d="M230.14,58.87A8,8,0,0,0,224,56H62.68L56.6,22.57A8,8,0,0,0,48.73,16H24a8,8,0,0,0,0,16h18L67.56,172.29a24,24,0,0,0,5.33,11.27,28,28,0,1,0,44.4,8.44h45.42A27.75,27.75,0,0,0,160,204a28,28,0,1,0,28-28H91.17a8,8,0,0,1-7.87-6.57L80.13,152h116a24,24,0,0,0,23.61-19.71l12.16-66.86A8,8,0,0,0,230.14,58.87ZM104,204a12,12,0,1,1-12-12A12,12,0,0,1,104,204Zm96,0a12,12,0,1,1-12-12A12,12,0,0,1,200,204Zm4-74.57A8,8,0,0,1,196.1,136H77.22L65.59,72H214.41Z"/></svg> Paso 4: Carrito &amp; Checkout (/cart)</button>
+              <button type="button" class="view-tab active" onclick="switchTab(6, 'compare', this)"><svg class="icon" viewBox="0 0 256 256" fill="currentColor" style="width:14px;height:14px;" aria-hidden="true"><path d="M229.66,90.34,90.34,229.66a8,8,0,0,1-11.31,0L26.34,177a8,8,0,0,1,0-11.31L165.66,26.34a8,8,0,0,1,11.31,0L229.66,79A8,8,0,0,1,229.66,90.34Z" opacity="0.2"/><path d="M235.32,73.37,182.63,20.69a16,16,0,0,0-22.63,0L20.68,160a16,16,0,0,0,0,22.63l52.69,52.68a16,16,0,0,0,22.63,0L235.32,96A16,16,0,0,0,235.32,73.37ZM84.68,224,32,171.31l32-32,26.34,26.35a8,8,0,0,0,11.32-11.32L75.31,128,96,107.31l26.34,26.35a8,8,0,0,0,11.32-11.32L107.31,96,128,75.31l26.34,26.35a8,8,0,0,0,11.32-11.32L139.31,64l32-32L224,84.69Z"/></svg> Comparativa Calce (-5 cm vs Ideal)</button>
+              <button type="button" class="view-tab" onclick="switchTab(6, 'tryon', this)"><svg class="icon" viewBox="0 0 256 256" fill="currentColor" style="width:14px;height:14px;" aria-hidden="true"><path d="M128,129.09V232a8,8,0,0,1-3.84-1l-88-48.16a8,8,0,0,1-4.16-7V80.2a8,8,0,0,1,.7-3.27Z" opacity="0.2"/><path d="M223.68,66.15,135.68,18h0a15.88,15.88,0,0,0-15.36,0l-88,48.17a16,16,0,0,0-8.32,14v95.64a16,16,0,0,0,8.32,14l88,48.17a15.88,15.88,0,0,0,15.36,0l88-48.17a16,16,0,0,0,8.32-14V80.18A16,16,0,0,0,223.68,66.15ZM128,32h0l80.34,44L128,120,47.66,76ZM40,90l80,43.78v85.79L40,175.82Zm96,129.57V133.82L216,90v85.78Z"/></svg> Paso 3: Probador 3D</button>
+              <button type="button" class="view-tab" onclick="switchTab(6, 'cart', this)"><svg class="icon" viewBox="0 0 256 256" fill="currentColor" style="width:14px;height:14px;" aria-hidden="true"><path d="M224,64l-12.16,66.86A16,16,0,0,1,196.1,144H70.55L56,64Z" opacity="0.2"/><path d="M230.14,58.87A8,8,0,0,0,224,56H62.68L56.6,22.57A8,8,0,0,0,48.73,16H24a8,8,0,0,0,0,16h18L67.56,172.29a24,24,0,0,0,5.33,11.27,28,28,0,1,0,44.4,8.44h45.42A27.75,27.75,0,0,0,160,204a28,28,0,1,0,28-28H91.17a8,8,0,0,1-7.87-6.57L80.13,152h116a24,24,0,0,0,23.61-19.71l12.16-66.86A8,8,0,0,0,230.14,58.87ZM104,204a12,12,0,1,1-12-12A12,12,0,0,1,104,204Zm96,0a12,12,0,1,1-12-12A12,12,0,0,1,200,204Zm4-74.57A8,8,0,0,1,196.1,136H77.22L65.59,72H214.41Z"/></svg> Paso 4: Carrito (/cart)</button>
             </div>
 
-            <div id="slide6-tryon" class="tab-pane active">
+            <div id="slide6-compare" class="tab-pane active">
+              <div class="split-compare">
+                <div class="compare-tile">
+                  <div class="compare-head tight"><span>Talle Chico (30)</span><span>-5 cm cintura</span></div>
+                  <button type="button" class="screenshot-btn" onclick="openLightbox('/images/slides/real_tryon_3d.png', 'Comparativa Antes: Talle Chico (-5 cm cintura) en /product/1')">
+                    <img src="/images/slides/real_tryon_3d.png" alt="Talle ajustado -5 cm en /product/1"/>
+                    <span class="zoom-hint"><svg class="icon" viewBox="0 0 256 256" fill="currentColor" style="width:12px;height:12px;" aria-hidden="true"><path d="M208,48V208H48V48Z" opacity="0.2"/><path d="M216,48V96a8,8,0,0,1-16,0V67.31l-42.34,42.35a8,8,0,0,1-11.32-11.32L188.69,56H160a8,8,0,0,1,0-16h48A8,8,0,0,1,216,48ZM98.34,146.34,56,188.69V160a8,8,0,0,0-16,0v48a8,8,0,0,0,8,8H96a8,8,0,0,0,0-16H67.31l42.35-42.34a8,8,0,0,0-11.32-11.32ZM208,152a8,8,0,0,0-8,8v28.69l-42.34-42.35a8,8,0,0,0-11.32,11.32L188.69,200H160a8,8,0,0,0,0,16h48a8,8,0,0,0,8-8V160A8,8,0,0,0,208,152ZM67.31,56H96a8,8,0,0,0,0-16H48a8,8,0,0,0-8,8V96a8,8,0,0,0,16,0V67.31l42.34,42.35a8,8,0,0,0,11.32-11.32Z"/></svg> Ampliar</span>
+                  </button>
+                </div>
+                <div class="compare-tile">
+                  <div class="compare-head ideal"><span>Talle Óptimo (32)</span><span>Calce Ideal (0 cm)</span></div>
+                  <button type="button" class="screenshot-btn" onclick="openLightbox('/images/slides/real_tryon_3d_fit.png', 'Comparativa Después: Calce Recomendado (0 cm cintura) en /product/1')">
+                    <img src="/images/slides/real_tryon_3d_fit.png" alt="Talle ideal 0 cm en /product/1"/>
+                    <span class="zoom-hint"><svg class="icon" viewBox="0 0 256 256" fill="currentColor" style="width:12px;height:12px;" aria-hidden="true"><path d="M208,48V208H48V48Z" opacity="0.2"/><path d="M216,48V96a8,8,0,0,1-16,0V67.31l-42.34,42.35a8,8,0,0,1-11.32-11.32L188.69,56H160a8,8,0,0,1,0-16h48A8,8,0,0,1,216,48ZM98.34,146.34,56,188.69V160a8,8,0,0,0-16,0v48a8,8,0,0,0,8,8H96a8,8,0,0,0,0-16H67.31l42.35-42.34a8,8,0,0,0-11.32-11.32ZM208,152a8,8,0,0,0-8,8v28.69l-42.34-42.35a8,8,0,0,0-11.32,11.32L188.69,200H160a8,8,0,0,0,0,16h48a8,8,0,0,0,8-8V160A8,8,0,0,0,208,152ZM67.31,56H96a8,8,0,0,0,0-16H48a8,8,0,0,0-8,8V96a8,8,0,0,0,16,0V67.31l42.34,42.35a8,8,0,0,0,11.32-11.32Z"/></svg> Ampliar</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div id="slide6-tryon" class="tab-pane">
               <div class="app-frame">
                 <div class="app-frame-bar">
                   <div class="traffic-dots"><span style="background:#ef4444;"></span><span style="background:#f59e0b;"></span><span style="background:#22c55e;"></span></div>
@@ -1483,16 +1562,34 @@
           </div>
 
           <div class="glass-card screenshot-card highlight">
-            <div class="app-frame">
-              <div class="app-frame-bar">
-                <div class="traffic-dots"><span style="background:#ef4444;"></span><span style="background:#f59e0b;"></span><span style="background:#22c55e;"></span></div>
-                <span>localhost:3000/brand/dashboard — Pestaña 3 Real</span>
-                <span>Excel + Monitor Observer</span>
+            <div class="view-tabs">
+              <button type="button" class="view-tab active" onclick="switchTab(8, 'excel', this)"><svg class="icon" viewBox="0 0 256 256" fill="currentColor" style="width:14px;height:14px;" aria-hidden="true"><path d="M208,88H152V32Z" opacity="0.2"/><path d="M156,208a8,8,0,0,1-8,8H120a8,8,0,0,1-8-8V152a8,8,0,0,1,16,0v48h20A8,8,0,0,1,156,208ZM92.65,145.49a8,8,0,0,0-11.16,1.86L68,166.24,54.51,147.35a8,8,0,1,0-13,9.3L58.17,180,41.49,203.35a8,8,0,0,0,13,9.3L68,193.76l13.49,18.89a8,8,0,0,0,13-9.3L77.83,180l16.68-23.35A8,8,0,0,0,92.65,145.49Zm98.94,25.82c-4-1.16-8.14-2.35-10.45-3.84-1.25-.82-1.23-1-1.12-1.9a4.54,4.54,0,0,1,2-3.67c4.6-3.12,15.34-1.73,19.82-.56a8,8,0,0,0,4.07-15.48c-2.11-.55-21-5.22-32.83,2.76a20.58,20.58,0,0,0-8.95,14.94c-2,15.89,13.65,20.42,23,23.12,12.06,3.49,13.12,4.92,12.78,7.59-.31,2.41-1.26,3.33-2.15,3.93-4.6,3.06-15.16,1.56-19.54.35A8,8,0,0,0,173.93,214a60.63,60.63,0,0,0,15.19,2c5.82,0,12.3-1,17.49-4.46a20.81,20.81,0,0,0,9.18-15.23C218,179,201.48,174.17,191.59,171.31ZM40,112V40A16,16,0,0,1,56,24h96a8,8,0,0,1,5.66,2.34l56,56A8,8,0,0,1,216,88v24a8,8,0,1,1-16,0V96H152a8,8,0,0,1-8-8V40H56v72a8,8,0,0,1-16,0ZM160,80h28.68L160,51.31Z"/></svg> Excel y Alertas en Vivo</button>
+              <button type="button" class="view-tab" onclick="switchTab(8, 'videob2b', this)"><svg class="icon" viewBox="0 0 256 256" fill="currentColor" style="width:14px;height:14px;" aria-hidden="true"><path d="M184,120v61.65a8,8,0,0,1-2.34,5.65l-34.35,34.35a8,8,0,0,1-13.57-4.53L128,176ZM136,72H74.35a8,8,0,0,0-5.65,2.34L34.35,108.69a8,8,0,0,0,4.53,13.57L80,128ZM40,216c37.65,0,50.69-19.69,54.56-28.18L68.18,161.44C59.69,165.31,40,178.35,40,216Z" opacity="0.2"/><path d="M223.85,47.12a16,16,0,0,0-15-15c-12.58-.75-44.73.4-71.41,27.07L132.69,64H74.36A15.91,15.91,0,0,0,63,68.68L28.7,103a16,16,0,0,0,9.07,27.16l38.47,5.37,44.21,44.21,5.37,38.49a15.94,15.94,0,0,0,10.78,12.92,16.11,16.11,0,0,0,5.1.83A15.91,15.91,0,0,0,153,227.3L187.32,193A15.91,15.91,0,0,0,192,181.64V123.31l4.77-4.77C223.45,91.86,224.6,59.71,223.85,47.12ZM74.36,80h42.33L77.16,119.52,40,114.34Zm74.41-9.45a76.65,76.65,0,0,1,59.11-22.47,76.46,76.46,0,0,1-22.42,59.16L128,164.68,91.32,128ZM176,181.64,141.67,216l-5.19-37.17L176,139.31Zm-74.16,9.5C97.34,201,82.29,224,40,224a8,8,0,0,1-8-8c0-42.29,23-57.34,32.86-61.85a8,8,0,0,1,6.64,14.56c-6.43,2.93-20.62,12.36-23.12,38.91,26.55-2.5,36-16.69,38.91-23.12a8,8,0,1,1,14.56,6.64Z"/></svg> Video Flujo Marca B2B</button>
+            </div>
+
+            <div id="slide8-excel" class="tab-pane active">
+              <div class="app-frame">
+                <div class="app-frame-bar">
+                  <div class="traffic-dots"><span style="background:#ef4444;"></span><span style="background:#f59e0b;"></span><span style="background:#22c55e;"></span></div>
+                  <span>localhost:3000/brand/dashboard — Pestaña 3 Real</span>
+                  <span>Excel + Monitor Observer</span>
+                </div>
+                <button type="button" class="screenshot-btn" onclick="openLightbox('/images/slides/real_brand_excel.png', 'Pasos 3 y 4 Marca — Carga Masiva Excel y Monitor de Eventos Observer en Tiempo Real (/brand/dashboard)')">
+                  <img src="/images/slides/real_brand_excel.png" alt="Captura real de Carga Masiva Excel y Monitor Observer en /brand/dashboard"/>
+                  <span class="zoom-hint"><svg class="icon" viewBox="0 0 256 256" fill="currentColor" style="width:13px;height:13px;" aria-hidden="true"><path d="M208,48V208H48V48Z" opacity="0.2"/><path d="M216,48V96a8,8,0,0,1-16,0V67.31l-42.34,42.35a8,8,0,0,1-11.32-11.32L188.69,56H160a8,8,0,0,1,0-16h48A8,8,0,0,1,216,48ZM98.34,146.34,56,188.69V160a8,8,0,0,0-16,0v48a8,8,0,0,0,8,8H96a8,8,0,0,0,0-16H67.31l42.35-42.34a8,8,0,0,0-11.32-11.32ZM208,152a8,8,0,0,0-8,8v28.69l-42.34-42.35a8,8,0,0,0-11.32,11.32L188.69,200H160a8,8,0,0,0,0,16h48a8,8,0,0,0,8-8V160A8,8,0,0,0,208,152ZM67.31,56H96a8,8,0,0,0,0-16H48a8,8,0,0,0-8,8V96a8,8,0,0,0,16,0V67.31l42.34,42.35a8,8,0,0,0,11.32-11.32Z"/></svg> Ampliar captura</span>
+                </button>
               </div>
-              <button type="button" class="screenshot-btn" onclick="openLightbox('/images/slides/real_brand_excel.png', 'Pasos 3 y 4 Marca — Carga Masiva Excel y Monitor de Eventos Observer en Tiempo Real (/brand/dashboard)')">
-                <img src="/images/slides/real_brand_excel.png" alt="Captura real de Carga Masiva Excel y Monitor Observer en /brand/dashboard"/>
-                <span class="zoom-hint"><svg class="icon" viewBox="0 0 256 256" fill="currentColor" style="width:13px;height:13px;" aria-hidden="true"><path d="M208,48V208H48V48Z" opacity="0.2"/><path d="M216,48V96a8,8,0,0,1-16,0V67.31l-42.34,42.35a8,8,0,0,1-11.32-11.32L188.69,56H160a8,8,0,0,1,0-16h48A8,8,0,0,1,216,48ZM98.34,146.34,56,188.69V160a8,8,0,0,0-16,0v48a8,8,0,0,0,8,8H96a8,8,0,0,0,0-16H67.31l42.35-42.34a8,8,0,0,0-11.32-11.32ZM208,152a8,8,0,0,0-8,8v28.69l-42.34-42.35a8,8,0,0,0-11.32,11.32L188.69,200H160a8,8,0,0,0,0,16h48a8,8,0,0,0,8-8V160A8,8,0,0,0,208,152ZM67.31,56H96a8,8,0,0,0,0-16H48a8,8,0,0,0-8,8V96a8,8,0,0,0,16,0V67.31l42.34,42.35a8,8,0,0,0,11.32-11.32Z"/></svg> Ampliar captura</span>
-              </button>
+            </div>
+
+            <div id="slide8-videob2b" class="tab-pane">
+              <div class="app-frame">
+                <div class="app-frame-bar">
+                  <div class="traffic-dots"><span style="background:#ef4444;"></span><span style="background:#f59e0b;"></span><span style="background:#22c55e;"></span></div>
+                  <span>Recorrido Animado Marca B2B (Catálogo → Estudio 3D → Excel)</span>
+                  <span>Clip MP4</span>
+                </div>
+                <video src="/videos/slides/demo_b2b.mp4" autoplay loop muted playsinline controls style="width:100%; height:100%; flex:1 1 0; min-height:0; object-fit:cover; background:#eef3f9; display:block;"></video>
+              </div>
             </div>
           </div>
         </div>
@@ -2322,7 +2419,16 @@
     <div class="thumb-dot active" data-target="1">01</div><div class="thumb-dot" data-target="2">02</div><div class="thumb-dot" data-target="3">03</div><div class="thumb-dot" data-target="4">04</div><div class="thumb-dot" data-target="5">05</div><div class="thumb-dot" data-target="6">06</div><div class="thumb-dot" data-target="7">07</div><div class="thumb-dot" data-target="8">08</div><div class="thumb-dot" data-target="9">09</div><div class="thumb-dot" data-target="10">10</div><div class="thumb-dot" data-target="11">11</div><div class="thumb-dot" data-target="12">12</div><div class="thumb-dot" data-target="13">13</div><div class="thumb-dot" data-target="14">14</div><div class="thumb-dot" data-target="15">15</div><div class="thumb-dot" data-target="16">16</div><div class="thumb-dot" data-target="17">17</div>
   </div>
 
-  <!-- Lightbox Modal -->
+  <!-- Notas del Orador (Modo Presentador - Tecla N) -->
+  <aside id="speaker-notes" aria-live="polite">
+    <div class="notes-header">
+      <span id="speaker-notes-title">Guía del Orador · Diapositiva 01</span>
+      <button type="button" onclick="toggleNotes()" style="background:rgba(255,255,255,0.14); border:none; color:#ffffff; padding:3px 10px; border-radius:9999px; font-size:0.74rem; font-weight:700; cursor:pointer;">Ocultar (N)</button>
+    </div>
+    <p id="speaker-notes-text"></p>
+  </aside>
+
+  <!-- Lightbox Modal (Imagen o Diagrama SVG Vectorial) -->
   <div id="lightbox" onclick="if(event.target === this) closeLightbox()">
     <div id="lightbox-card">
       <div id="lightbox-caption">
@@ -2330,16 +2436,48 @@
         <button type="button" class="btn-glass" onclick="closeLightbox()" style="padding: 4px 12px;">Cerrar (Esc)</button>
       </div>
       <img id="lightbox-img" src="" alt="Captura ampliada"/>
+      <div id="lightbox-svg-stage"></div>
     </div>
   </div>
 
   <script>
+    const SPEAKER_NOTES = {
+      1: "Presentación inicial: TryOn Hub resuelve la fricción de talles conectando marcas y compradores con gemelos digitales 3D en centímetros reales. Destacar 122 pruebas aprobadas, 13 tablas y renderizado en el navegador.",
+      2: "Explicar el dolor económico: entre 25% y 40% de devoluciones por error de talle. El talle S/M/42 cambia entre marcas y modelar manualmente cuesta USD $50-$150 por prenda.",
+      3: "Marco teórico de cátedra: Pattern Breakers (3 inflexiones: WebGL móvil, Gemini 2.5 Flash y costo de devoluciones) + 4 pilares Zero to One (análisis O(1) en servidor y ejecución infinita gratis en el navegador).",
+      4: "Mostrar la simetría de valor: el cliente guarda hasta 10 avatares y diagnostica calce; la marca gestiona catálogo, Estudio 3D en cm e importación masiva por Excel.",
+      5: "Demo Usuario Parte 1: mostrar /marketplace con filtros en vivo y el editor /avatar con 9 medidas reales en cm + look y accesorios. Se puede alternar a la pestaña de video animado.",
+      6: "Demo Usuario Parte 2: comparar lado a lado Talle Chico (-5 cm cintura) vs Calce Ideal (0 cm en verde) sobre el mismo avatar en /product/1, y cierre en el carrito por variantes (/cart).",
+      7: "Demo Marca Parte 1: mostrar /brand/dashboard como Brand Manager (Pestaña 1 CRUD con duplicación rápida y Pestaña 2 Estudio Boutique 3D con sliders en cm en tiempo real).",
+      8: "Demo Marca Parte 2: mostrar carga masiva .xlsx/.xls (202 Accepted sin bloquear la pantalla) y el Monitor Observer recibiendo notificaciones PUSH en vivo desde GET /catalog/notifications.",
+      9: "Arquitectura en capas estrictas: Frontend Next.js (5 módulos de rutas), API FastAPI, Servicios con patrones GoF y Repositorios SQLAlchemy sobre 13 tablas normalizadas.",
+      10: "Diagramas de Secuencia UML interactivos: alternar entre Alta/Edición (bifurcación IA vs Paramétrica y rollback automático), Carga Excel + Caché MD5 + Observer, y Probador + Checkout.",
+      11: "Patrones GoF verificados (Factory Method, Decorator, Observer Push, Strategy, Repository), mapeo concreto de los 5 principios SOLID y estados finitos de ProcessingJob y Order.",
+      12: "Explicar el motor geométrico LoftGeometry: anillos Catmull-Rom continuos compartidos entre avatar y prenda y fórmula ponderada de calce (55% cintura, 35% cadera, 10% muslo).",
+      13: "Resiliencia transaccional: si Gemini falla se ejecuta db.rollback() limpio; al comprar se congela el precio en OrderItem y se usa SET NULL para no romper historial contable si se borra la prenda.",
+      14: "Seguridad integral: contraseñas cifradas con Bcrypt, sesiones JWT firmadas, control de acceso por 3 roles + verificación de propietario y recuperación de clave de un solo uso con huella pwf.",
+      15: "Trazabilidad con requerimientos (RQ1-RQ6, RNF1-RNF5, historias INVEST) y suite completa ejecutada con 122 pruebas aprobadas al 100% + TypeScript con 0 errores.",
+      16: "Modelo de negocio híbrido (Planes SaaS + comisión 5%-8% + analítica de demanda en cm) y brecha transparente entre prototipo actual y arquitectura final en la nube en 4 etapas.",
+      17: "Cierre y paso a demo en vivo: mostrar credenciales seed (cliente@tryon.com y brand@tryon.com, clave 123456) y botones directos a la aplicación real y Swagger."
+    };
+
     let currentSlide = 1;
     const totalSlides = 17;
     const slides = document.querySelectorAll('.slide');
     const progressFill = document.getElementById('progress-fill');
     const thumbDots = document.querySelectorAll('.thumb-dot');
     const secPills = document.querySelectorAll('.sec-pill');
+    const speakerNotesBox = document.getElementById('speaker-notes');
+    const speakerNotesTitle = document.getElementById('speaker-notes-title');
+    const speakerNotesText = document.getElementById('speaker-notes-text');
+
+    function updateNotesContent(n) {
+      if (speakerNotesTitle) speakerNotesTitle.textContent = `Guía del Orador · Diapositiva ${String(n).padStart(2, '0')} / ${totalSlides}`;
+      if (speakerNotesText) speakerNotesText.textContent = SPEAKER_NOTES[n] || '';
+    }
+    function toggleNotes() {
+      if (speakerNotesBox) speakerNotesBox.classList.toggle('open');
+    }
 
     function updateSectionPill(slideNum) {
       let activeSec = 1;
@@ -2370,6 +2508,7 @@
         dot.classList.toggle('active', parseInt(dot.dataset.target, 10) === currentSlide);
       });
       updateSectionPill(currentSlide);
+      updateNotesContent(currentSlide);
     }
 
     function nextSlide() { if (currentSlide < totalSlides) goToSlide(currentSlide + 1); }
@@ -2398,14 +2537,35 @@
 
     const lightbox = document.getElementById('lightbox');
     const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxSvgStage = document.getElementById('lightbox-svg-stage');
     const lightboxTitle = document.getElementById('lightbox-title');
 
     function openLightbox(src, title) {
+      lightboxSvgStage.style.display = 'none';
+      lightboxSvgStage.innerHTML = '';
+      lightboxImg.style.display = 'block';
       lightboxImg.src = src;
       lightboxTitle.textContent = title;
       lightbox.classList.add('open');
     }
+    function openDiagramLightbox(panelEl) {
+      const svgEl = panelEl.querySelector('svg');
+      if (!svgEl) return;
+      lightboxImg.style.display = 'none';
+      lightboxSvgStage.innerHTML = '';
+      const cloned = svgEl.cloneNode(true);
+      cloned.removeAttribute('style');
+      lightboxSvgStage.appendChild(cloned);
+      lightboxSvgStage.style.display = 'flex';
+      lightboxTitle.textContent = svgEl.getAttribute('aria-label') || 'Diagrama UML ampliado';
+      lightbox.classList.add('open');
+    }
     function closeLightbox() { lightbox.classList.remove('open'); }
+
+    document.querySelectorAll('.diagram-panel').forEach(panel => {
+      panel.setAttribute('title', 'Clic para ampliar diagrama en pantalla completa');
+      panel.addEventListener('click', () => openDiagramLightbox(panel));
+    });
 
     window.addEventListener('keydown', (e) => {
       if (lightbox.classList.contains('open')) {
@@ -2424,8 +2584,13 @@
         goToSlide(totalSlides);
       } else if (e.key === 'f' || e.key === 'F') {
         toggleFullscreen();
+      } else if (e.key === 'n' || e.key === 'N') {
+        toggleNotes();
       }
     });
+
+    const notesToggleBtn = document.getElementById('btn-notes-toggle');
+    if (notesToggleBtn) notesToggleBtn.addEventListener('click', toggleNotes);
 
     const drawerToggleBtn = document.getElementById('btn-drawer-toggle');
     const thumbDrawer = document.getElementById('thumb-drawer');
